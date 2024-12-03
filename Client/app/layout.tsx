@@ -5,6 +5,7 @@ import AppProvider from "./components/providers";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import Navbar from "./components/ui/Navbar";
+import {MoralisProvider} from "react-moralis"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,10 +23,12 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <MoralisProvider initializeOnMount={false}>
         <AppProvider session={session}>
           {/* <Navbar /> */}
           {children}
         </AppProvider>
+        </MoralisProvider>
       </body>
     </html>
   );

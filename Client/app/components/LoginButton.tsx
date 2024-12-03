@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 export function LoginButton() {
@@ -11,7 +11,23 @@ export function LoginButton() {
       signOut();
     } else {
       // User is not signed in, sign them in
-      
+  const idToken = useMemo(() => (session?.id_token || null), [session]);
+      console.log(idToken); // Log the id_token for debugging
+
+      const authorizeUser = await fetch("https://sandbox-api.okto.tech/api/v1/authorize", {
+        method: 'POST',
+        headers: {
+          "X-Api-Key": process.env.AUTH_SECRET || '',
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          clientTokenId: idToken, // Pass the id_token in the request body
+        }),
+      });
+
+      // Handle the response from the authorizeUser fetch
+      const response = await authorizeUser.json();
+      console.log("Authorization Response:", response);
 
       // Sign in with Google after authorization
       signIn("google");
